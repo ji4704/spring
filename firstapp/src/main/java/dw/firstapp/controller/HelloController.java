@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-    @GetMapping("/sayhello") // 주소(url)
+    @GetMapping("/sayhello") // "/sayhello" 주소(url)
 
     public String hello() {
         return "Hello World!";
