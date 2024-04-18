@@ -14,9 +14,13 @@ public class Employee {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(name = "email")
+    @Column
     private String email;
+
+
+
+    public Employee() {
+    }
 
     public Employee(long id, String firstName, String lastName, String email) {
         this.id = id;
