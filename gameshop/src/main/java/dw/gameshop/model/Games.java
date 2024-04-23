@@ -9,9 +9,8 @@ public class Games {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Column(name = "title", length = 100, nullable = false)
-    private String tile;
+    private String title;
     @Column(name = "genre", length = 100, nullable = false)
     private String genre;
     @Column(name = "price", nullable = false)
@@ -26,7 +25,7 @@ public class Games {
 
     public Games(long id, String tile, String genre, int price, String image, String text) {
         this.id = id;
-        this.tile = tile;
+        this.title = tile;
         this.genre = genre;
         this.price = price;
         this.image = image;
@@ -42,11 +41,11 @@ public class Games {
     }
 
     public String getTile() {
-        return tile;
+        return title;
     }
 
     public void setTile(String tile) {
-        this.tile = tile;
+        this.title = tile;
     }
 
     public String getGenre() {
