@@ -1,7 +1,9 @@
 package dw.firstapp.service;
 
+import dw.firstapp.exception.ResourceNotFoundException;
 import dw.firstapp.model.Employee;
 import dw.firstapp.repository.EmployeeRepository;
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,71 +13,49 @@ import java.util.Optional;
 
 @Service
 public class EmployeeService {
-    // 의존성주입
+    //의존성주입
     @Autowired
     EmployeeRepository employeeRepository;
-    public Employee saveEmployee(Employee employee) {
+    public Employee saveEmployee(Employee employee){
         // repository code - save
         employeeRepository.save(employee);
         return employee;
     }
-    public List<Employee> getAllEmployees(){
+    public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
-
-    public Employee getEmployeeById(long id) {
+    public Employee getEmployeeById(@PathVariable long id){
         Optional<Employee> employee = employeeRepository.findById(id);
-        if (employee.isEmpty()) {
-            // 예외처리
-            return null;
+        if(employee.isEmpty()) {
+            //예외처리 -> 예외처리 파일 만든 후 넘어온다.
+            throw new ResourceNotFoundException("Employee","ID",id);
         }else {
             return employee.get();
         }
     }
-    public Employee updateEmployeeById(long id,Employee employee) {
-        // ID로 해당 데이터 찾기
+    public Employee updateEmployeeById(long id, Employee employee) {
+        //ID로 해당 데이터 찾기
         Optional<Employee> employee1 = employeeRepository.findById(id);
-        if (employee1.isPresent()) {
-            // 데이터 업데이트
+        if (employee1.isPresent()) {  //isPresent 반대개념 isEmpty
+            //데이터 업데이트
             employee1.get().setEmail(employee.getEmail());
             employee1.get().setFirstName(employee.getFirstName());
             employee1.get().setLastName(employee.getLastName());
-
-            // 실제로 DB에 저장히기
+            // 실제로 DB에 저장하기
             employeeRepository.save(employee1.get());
-            return  employee1.get();
-        }else {
-            return null;
+
+            return employee1.get();
+        } else {
+            throw new ResourceNotFoundException("Employee","ID",id);
         }
     }
-    public Employee deleteEmployeeById(long id) {
+    public Employee deleteEmployeeById(long id){
         Optional<Employee> employee = employeeRepository.findById(id);
-        if (employee.isPresent()) {
+        if(employee.isPresent()){
             employeeRepository.deleteById(id);
             return employee.get();
-        }else {
-            return null;
         }
+        else {
+            throw new ResourceNotFoundException("Employee","ID",id);        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

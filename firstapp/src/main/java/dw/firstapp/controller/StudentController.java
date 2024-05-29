@@ -10,16 +10,18 @@ import java.util.List;
 
 @RestController
 public class StudentController {
-    @Autowired
+    @Autowired // 밑에 빌려온 변수를 사용하겠다는 의미 // BEAN을 관리하는 곳에서 빌려온다.
     StudentService studentService;
+
+    //하나의 객체 보내주기
     @GetMapping("/student")
     public Student getStudent() {
         return new Student("Tom", "Smith");
-
-
     }
+
+    //여러개의 객체 보내주기
     @GetMapping("/students")
-    public List<Student> getStudents(){
+    public List<Student> getStudents() {
         List<Student> students = new ArrayList<>();
         students.add(new Student("Tom", "Smith"));
         students.add(new Student("John", "Long"));
@@ -28,34 +30,37 @@ public class StudentController {
         students.add(new Student("Mike", "Tyson"));
         return students;
     }
-    @GetMapping("/student/{firstName}/{lastName}")  //{firstName} 변수를 표기하기위해(Tomcat한테 알려줌) 중괄호를 표시
-    public Student studentPathVariable(@PathVariable String firstName, // @PathVariable: String firstName 호출
-                                       @PathVariable String lastName) { // @PathVariable: String lastName 호출
-        return new Student(firstName, lastName);
 
+    //값을 주소에 입력시켜서 보내는 방법 - PathVariable 을 이용한 방법
+    @GetMapping("/student/{firstName}/{lastName}") // {firstName}/{lastName}은 변수역활, 그 위치에 값을 대입
+    public Student studentPathvariable(@PathVariable String firstName,
+                                       @PathVariable String lastName) {
+        return new Student(firstName, lastName);
     }
 
-
+    //값을 주소에 입력시켜서 보내는 방법 - RequestParam 을 이용한 방법
     @GetMapping("/student/query")
-    // localhost:8080/student/query?firstName=Tom&lastName=Smith
+    // 사용방법 - 뛰어쓰기 없이 ? 와 =, & 기호를 사용해 주소를 만든다.
+    // localhost:8080/student/query?firstname=Tom&lastName=Smith
     public Student studentRequestParam(
-            @RequestParam String firstName,   // @RequestParam 보안에 취약하고 공개해도 될 내용을 쓸때 사용
+            @RequestParam String firstName,
             @RequestParam String lastName) {
         return new Student(firstName, lastName);
     }
-
+    //body 에는 숨겨야 할 내용 혹은 긴 내용을 담는다.
+    // @RequestBody = body에 있는 객체를 가져와서 사용
+    // 프론트 쪽에서 정보를 제이슨 형태로 전달 받아야 한다. 미스매치 주의.
     @PostMapping("/student/post")
-    public Student studentPost(@RequestBody Student student) { // body에 있는 내용을 가져와서 student에 캐스팅
+    public Student studentPost(@RequestBody Student student) {
         System.out.println(student.getFirstName() + " " + student.getLastName());
-        return new Student(student.getFirstName(), student.getLastName());
+        return new Student(student.getFirstName(),student.getLastName());
     }
     @GetMapping("/student/score/{firstName}/{lastName}")
     public int getStudentScore(@PathVariable String firstName,
                                @PathVariable String lastName){
-        Student student = new Student(firstName, lastName); // model에 있는것만 객체를 만들어서 new 씀
-        // StudentService = been이므로 인스턴스화 하지 않는다.
+        Student student = new Student(firstName, lastName);
+        // StudentService는 Bean이므로 인스턴스화하지 않는다.
         // StudentService studentService = new StudentService();
         return studentService.getStudentScore(student);
     }
 }
-
