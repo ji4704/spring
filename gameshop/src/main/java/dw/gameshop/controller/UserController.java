@@ -1,5 +1,6 @@
 package dw.gameshop.controller;
 
+import dw.gameshop.dto.SessionDto;
 import dw.gameshop.dto.UserDto;
 import dw.gameshop.service.UserDetailService;
 import dw.gameshop.service.UserService;
@@ -37,6 +38,7 @@ public class UserController {
     public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.saveUser(userDto),
                 HttpStatus.CREATED);
+        //없던 데이터가 생길 때 보통 CREATED => 201을 리턴하게 한다.
     }
 
     @PostMapping("login")
@@ -64,11 +66,14 @@ public class UserController {
         return "You have been logged out.";
     }
     @GetMapping("current")
-    public String getCurrentUser() {
+    public SessionDto getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("User is not authenticated");
         }
-        return authentication.getName();
+        SessionDto sessionDto = new SessionDto();
+        sessionDto.setUserId(authentication.getName());
+        sessionDto.setAuthority(authentication.getAuthorities());
+        return sessionDto;
     }
 }

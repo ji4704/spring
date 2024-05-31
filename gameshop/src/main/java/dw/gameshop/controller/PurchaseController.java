@@ -5,11 +5,13 @@ import dw.gameshop.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class PurchaseController {
     @Autowired
     PurchaseService purchaseService;
@@ -17,6 +19,12 @@ public class PurchaseController {
     public Purchase savePurchase(@RequestBody Purchase purchase){
         return purchaseService.savePurchase(purchase);
     }
+    @PostMapping("/products/purchaselist")
+    @PreAuthorize("hasAnyRole('ADMIN')") // hasAnyRole = 허용되는 부분 ('ADMIN') => ADMIN 권한을 가진 유저에게만 허용하겠다.
+    public List<Purchase> savePurchaseList(@RequestBody List<Purchase> purchaseList) {
+        return purchaseService.savePurchaseList(purchaseList);
+    }
+
     @GetMapping("products/purchase")
     public List<Purchase> getAllPurchase() {
         return purchaseService.getAllPurchase();
